@@ -23,7 +23,11 @@ redistri_sc_3 <- function(indicador, seccionat_origen, seccionat_desti, pes){
   # prepara dades intermedies
   intermedies <- SCdesti %>%
     dplyr::filter(ANYO == as.numeric(seccionat_origen)) %>%
-    dplyr::select(ANYO, REFCAT, SECCIO)
+    dplyr::select(ANYO, REFCAT, SECCIO, ESPOB2_hab)
+
+  ## punts de control
+  xx <- intermedies %>% filter(SECCIO %in% indicador$SECCIO)
+  n_refcat_ini <- length(unique(xx$REFCAT))
 
   # prepara dades de destí
   ## les estimacions de població són del seccionat de *destí*, sota el supòsit que l'indicador informa sobre l'any de destí, no d'origen.
@@ -44,12 +48,15 @@ redistri_sc_3 <- function(indicador, seccionat_origen, seccionat_desti, pes){
     dplyr::ungroup(.) %>%
     dplyr::select(-c(TT_pob_sc, TT_hab_sc))
 
-  # vector amb seccions finals (punt de control)
+  # punts de control
   x1 <- intermedies %>%
     filter(SECCIO %in% indicador$SECCIO)
   SCfinals <- desti %>%
     filter(REFCAT %in% x1$REFCAT) %>%
     pull(SECCIO) %>% unique()
+
+  yy <- desti %>% filter(SECCIO %in% SCfinals)
+  n_refcat_fin <- length(unique(yy$REFCAT))
 
   # trasllada dades
   ## 1. variables de l'indicador d'origen a REFCATS intermedies, by SECCIO
@@ -60,19 +67,26 @@ redistri_sc_3 <- function(indicador, seccionat_origen, seccionat_desti, pes){
 
   ## 3. redistribueix variables de nivell SECCIO a nivell REFCAT amb pesos
   ## 4. agrega i reagrupa per SECCIO de destí
-  desti <- desti %>%
+  desti2 <- desti %>%
     dplyr::group_by(SECCIO, ANYO) %>%
     dplyr::summarise(across(myvars, ~sum(as.numeric(.x)*.data$pes, na.rm = T), .names = "SC_{.col}")) %>%
     dplyr::ungroup() %>%
     dplyr::filter(SECCIO %in% SCfinals)
 
+  # Checks de qualitat
+  ## 1. compara nº seccions origen i destí
   if(length(desti$SECCIO) != length(indicador$SECCIO)){print("Atenció, no coincideix el nombre de seccions d'origen i destí")}
+  ## 2. compara suma poblacions origen i destí: Aquesta comparació no té sentit. La trec
+  # if(pob_ini != pob_fin) {print(paste0("Atenció, no coincideix la N poblacional inicial i final. La inicial és ", pob_ini, ", i la final és ", pob_fin))}
+
+  ## 3. compara nombre de referències catastrals
+  if(n_refcat_ini != n_refcat_fin) {print(paste0("Atenció, no coincideix el nombre de referències catastrals inicial i final. La inicial és ", n_refcat_ini, ", i la final és ", n_refcat_fin))}
 
   # origen[, myvars] <- indicador[match(origen$SECCIO, indicador$SECCIO), myvars]
   # desti[, c(myvars, "pes")] <- origen[match(desti$REFCAT, origen$REFCAT), c(myvars, "pes")]
   # rm("indicador", "origen")
   # # reagrupa per secció de destí segons pes d'origen
 
-  return(desti)
+  return(desti2)
 
 }
