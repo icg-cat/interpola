@@ -27,6 +27,7 @@
 #' \describe{  
 #'   \item{indicador}{taula de dades d'atur}  
 #'   \item{cad_AMB}{taula amb dades cadastre}  
+#'   \item{shapes}{ESRI shapefile d'exemple (crs = 4326)}  
 #'   ...  
 #' }  
 'ex_data' 

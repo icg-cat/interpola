@@ -19,7 +19,7 @@ redistri_sc_3(indicador, seccionat_origen, seccionat_desti, pes)
 tibble amb dades redistribuides en el seccionat de destí
 }
 \description{
-Aquesta és una de les versions possibles per la funció de redistribució de dades. A partir d'un seccionat d'origen, redistribueix les dades d'un indicador a un altre seccionat de destí. S'enten que els seccionats d'origen i destí fan referència al mateix territori però pertanyen a edicions diferents. La redistribució es fa passant les dades al nivell de parcel·la i reagrupant-les posteriorment amb el nou seccionat. Les dades a nivell de parcel·la sel's assigna un pes del seccionat d'origen. Aquest pes pot ser poblacional o d'habitatges, i cal especificar-ho entre els arguments de la funció.
+Aquesta és una de les versions possibles per la funció de redistribució de dades. A partir d'un seccionat d'origen, redistribueix les dades d'un indicador a un altre seccionat de destí. S'enten que els seccionats d'origen i destí fan referència al mateix territori però pertanyen a edicions diferents. Es suposa també que l'indicador inicial informa les dades de l'any del seccionat de destí, però s'organitzen amb el seccionat d'origen. Per exemple, dades de salut de 2021, amb seccionat de 2011, es volen passar a seccionat de 2021. La redistribució es fa passant les dades al nivell de parcel·la i reagrupant-les posteriorment amb el nou seccionat. Les dades a nivell de parcel·la sel's assigna un pes del seccionat de destí (sota el benentès que s'ha de correspondre la distribució de població amb l'indicador que s'informa). Aquest pes pot ser poblacional o d'habitatges, i cal especificar-ho entre els arguments de la funció.
 }
 \examples{
 data(ex_data, package = "interpola")

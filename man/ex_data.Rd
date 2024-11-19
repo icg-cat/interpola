@@ -10,6 +10,7 @@ inclou dos df: un indicador amb la taxa d'atur segons el cens i una submostra de
 \describe{  
   \item{indicador}{taula de dades d'atur}  
   \item{cad_AMB}{taula amb dades cadastre}  
+  \item{shapes}{ESRI shapefile d'exemple (crs = 4326)}  
   ...  
 }
 }

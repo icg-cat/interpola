@@ -23,17 +23,7 @@ redistri_sc_3 <- function(indicador, seccionat_origen, seccionat_desti, pes){
   # prepara dades intermedies
   intermedies <- SCdesti %>%
     dplyr::filter(ANYO == as.numeric(seccionat_origen)) %>%
-    dplyr::select(ANYO, REFCAT, SECCIO, ESPOB2_hab)
-
-  ## punts de control
-  xx <- intermedies %>% filter(SECCIO %in% indicador$SECCIO)
-  n_refcat_ini <- length(unique(xx$REFCAT))
-
-  # prepara dades de destí
-  ## les estimacions de població són del seccionat de *destí*, sota el supòsit que l'indicador informa sobre l'any de destí, no d'origen.
-  desti <- SCdesti %>%
-    dplyr::filter(ANYO == as.numeric(seccionat_desti)) %>%
-    dplyr::select(ANYO, REFCAT, SECCIO, ESPOB2_hab, pc_Nhabitatges) %>%
+    dplyr::select(ANYO, REFCAT, SECCIO, ESPOB2_hab, pc_Nhabitatges)%>%
     dplyr::group_by(SECCIO, ANYO) %>%
     dplyr::mutate(
       TT_pob_sc = sum(ESPOB2_hab, na.rm = T),
@@ -47,6 +37,15 @@ redistri_sc_3 <- function(indicador, seccionat_origen, seccionat_desti, pes){
     ) %>%
     dplyr::ungroup(.) %>%
     dplyr::select(-c(TT_pob_sc, TT_hab_sc))
+
+  ## punts de control
+  xx <- intermedies %>% filter(SECCIO %in% indicador$SECCIO)
+  n_refcat_ini <- length(unique(xx$REFCAT))
+
+  # prepara dades de destí
+  desti <- SCdesti %>%
+    dplyr::filter(ANYO == as.numeric(seccionat_desti)) %>%
+    dplyr::select(ANYO, REFCAT, SECCIO, ESPOB2_hab)
 
   # punts de control
   x1 <- intermedies %>%
@@ -62,8 +61,8 @@ redistri_sc_3 <- function(indicador, seccionat_origen, seccionat_desti, pes){
   ## 1. variables de l'indicador d'origen a REFCATS intermedies, by SECCIO
   intermedies[,myvars] <- indicador[match(intermedies$SECCIO, indicador$SECCIO), myvars]
 
-  ## 2. variables del conjunt intermedi al conjunt de destí, by REFCAT
-  desti[,myvars] <- intermedies[match(desti$REFCAT, intermedies$REFCAT), myvars]
+  ## 2. variables del conjunt intermedi i pes al conjunt de destí, by REFCAT
+  desti[,c(myvars, "pes")] <- intermedies[match(desti$REFCAT, intermedies$REFCAT), c(myvars, "pes")]
 
   ## 3. redistribueix variables de nivell SECCIO a nivell REFCAT amb pesos
   ## 4. agrega i reagrupa per SECCIO de destí
