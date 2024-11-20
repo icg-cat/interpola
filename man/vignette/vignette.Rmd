@@ -120,6 +120,11 @@ sp <- ex_data$shapes %>%
 ```
 
 ```{r}
+fes_mapa(shape_data = sp, nom_indicador = "Tatur", ciutat = "Badalona", focus = 14)
+```
+
+
+```{r}
 bcn_lat <- 41.4476  # Latitud  Barcelona
 bcn_lng <- 2.2462   # Longitud  Barcelona
 
