@@ -1,20 +1,19 @@
 ---
-title: "Package interpola vignette"
+title: "Package interpola - vignette"
 author: "Irene Cruz"
 date: "`r format(Sys.time(), '%d-%m-%y')`"
 output: 
-  html_document:
-    df_print: paged
+  html_document: 
     css: mycerulean.css
     highlight: tango
-    code_folding: hide
     number_sections: true
     toc: true
     toc_float:
       collapsed: true
       smooth_scroll: true
+    keep_md: true
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 ![](trama.png)
@@ -23,27 +22,16 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
 ```
 
-```{r eval=FALSE, include=FALSE}
-# Aquest chunk insereix el logo del IM: 
-htmltools::img(src = knitr::image_uri("logo.png"), 
-               alt = 'logo', 
-               width = 230, 
-               height = 100, 
-               style = 'position:absolute; 
-               top:0; right:0; 
-               padding:10px;')
-```
-
-```{r}
+```{r echo = F, include = F, message=F, warning = F}
 rmarkdown::includes(in_header = "trama.png")
 ```
 
-
-
-```{r include = FALSE}
+```{r echo = FALSE, include = FALSE}
 library(showtext)
 library(tidyverse)
 library(interpola)
+library(sf)
+library(leaflet)
 ```
 
 
@@ -56,7 +44,7 @@ showtext_auto()
 
 # Presentació
 
-El paquet `interpola` simplifica un seguit de tasques per la interpolació espacial de dades d'indicadors informats al nivell de la secció censal. En la seva versió actual (`r packageVersion("interpola"`), el paquet consta de 3 funcions:
+El paquet `interpola` simplifica un seguit de tasques per la interpolació espacial de dades d'indicadors informats al nivell de la secció censal. En la seva versió actual (`r packageVersion("interpola")`, el paquet consta de 3 funcions:
 
 * estandarditza_1(): funció per estandarditzar les dades inicials a un format que es pugui integrar posteriorment amb les dades catastrals, que són les que permeten dividir i reagrupar en altres divisions territorials
 * identifica_seccionat_2(): funció que identifica l'any de seccionat de les dades inicials (que no té per què coincidir amb l'any dels indicadors informats)
@@ -64,17 +52,17 @@ El paquet `interpola` simplifica un seguit de tasques per la interpolació espac
 
 L'estat de desenvolupament actual del paquet es resumeix en aquest diagrama de procés: 
 
-```{r, out.width="0.3\\linewidth", include=TRUE, fig.align="center", echo=FALSE}
+```{r include = TRUE, fig.align = "center", echo = FALSE, out.height=400, out.width = "100%"}
+#out.width = "100%"
 knitr::include_graphics(here::here("data-raw/workflow.pdf"))
 ```
 
 
 # Exemples d'ús
 
+Posem per cas que tenim unes dades sobre mercat de treball corresponents a l'any 2021. Les tenim informades per secció censal. En aquest exemple més simple, l'any de l'indicador (taxa d'atur) i l'any del seccionat coincideixen (2021), però podria no ser el cas. Suposem que, per motius analítics, necessitem interpolar aquest indicador al seccionat de l'any 2011 (i així integrar-lo en una base pre-existent que fa servir aquest seccionat). Farem servir les dades de mostra contingudes al paquet per il·lustrar el procediment. 
 
-Posem per cas que tenim unes dades sobre mercat de treball corresponents a l'any 2021. Les tenim informades per secció censal. En aquest exemple més simple, l'any de l'indicador (taxa d'atur) i l'any del seccionat coincideixen, però podria no ser el cas. Per motius analítics, necessitem interpolar aquest indicador al seccionat de l'any 2011. Farem servir les dades de mostra contingudes al paquet per il·lustrar el procediment. 
-
-Primer carreguem les dades, que es troben en format de llista, en tres conjunts diferents: 
+Primer carreguem les dades d'exemple, que es troben en format de llista, i contenen tres conjunts diferents: 
 
 * `indicador`: conté una taula amb la taxa d'atur informada per una submostra de seccions censals. Serveix també d'exemple del format (long) que cal fer servir pel procediment, on hi haurà un mínim de tres columnes o variables, sent una el seccionat, una altra l'any pel qual s'informa l'indicador, i una tercera l'indicador. 
 * `cad_AMB`: conté una taula amb una submostra de parcel·les catastrals de les seccions contingudes al primer conjunt de dades. El paquet conté un conjunt de dades de mostra, consistent en la correspondència entre parcel·les catastrals i seccions censals, així com estimacions de població i nombre d'habitatges per parcel·la, pels anys 2011 i per l'interval de 2015 a 2023. Aquesta taula no està inclosa en la versió pública del paquet (a GitHub), però està inclosa a la versió local del paquet. 
@@ -93,9 +81,12 @@ En un primer pas, podem preparar les dades d'input (l'indicador), donant a les v
 El resultat és un dataframe amb l'indicador inicial, amb els noms estandarditzats, i sense files ni columnes buides. Altres tractaments de depuració o reestructuració de dades que puguin necessitar-se s'han de fer a banda d'aquesta funció. 
 
 ```{r}
-d1 <- interpola::estandarditza_1(ex_data$indicador, grep_edicio = "ANY", grep_seccio = "SECCIO$")
+d1 <- interpola::estandarditza_1(
+  indicador = ex_data$indicador, 
+  grep_edicio = "edicio", 
+  grep_seccio = "sc_")
 
-d1
+head(d1)
 ```
 
 
@@ -108,15 +99,57 @@ En un segon pas, identificarem el seccionat d'origen de l'indicador. Aquest pas 
 En darrer lloc, aplicarem la interpolació espacial de les dades. Perquè l'indicador informa una dada poblacional, farem servir la ponderació de distribució que té en compte les persones per parcel·la, en lloc del nombre d'habitatges. 
 
 ```{r}
-res <- interpola::redistri_sc_3(indicador = d1[,1:3], 
+res <- interpola::redistri_sc_3(indicador = d1, 
                                 seccionat_origen = seccionat_origen, 
                                 seccionat_desti = "2011", 
                                 pes = "persones")
 ```
 
+El procés aplica una sèrie de controls de qualitat sobre els resultats i genera avisos. Aquests no són missatges d'error, sinó que ens avisen i hem de valorar nosaltres si cal que apliquem cap revisió adicional. 
+
 L'objecte `res` conté els resultats d'interpolar les dades de la taxa d'atur de 2021 al seccionat de 2011. 
 
 # Mapejar els resultats
 
-Revisem els resultats obtinguts. 
+Revisem els resultats obtinguts. Primer hem de preparar les dades. Agafem la mostra de shapefile de les dades d'exemple, i li agreguem les dades interpolades
+```{r}
+sp <- ex_data$shapes %>% 
+  mutate(
+    Tatur = res$SC_taxa_atur[match(ex_data$shapes$Sc2021, res$SECCIO)]
+  )
+```
+
+```{r}
+bcn_lat <- 41.4476  # Latitud  Barcelona
+bcn_lng <- 2.2462   # Longitud  Barcelona
+
+pal <- leaflet::colorNumeric(palette = "YlOrRd",
+                    domain = sp$Tatur,
+                    na.color = "grey90")
+
+
+# choropleth
+leaflet(data = sp) %>%
+  addTiles() %>%
+  setView(lng = bcn_lng, 
+          lat = bcn_lat, 
+          zoom = 14) %>%  
+  addPolygons(
+    fillColor = ~colorQuantile("YlOrRd",
+                               sp$Tatur)
+    (sp$Tatur),
+    fillOpacity = ~ifelse(is.na(sp$Tatur), 0.95, 0.6),
+    color = "grey90",
+    weight = 1
+  ) %>%
+  addLegend(
+    pal = pal, # for continuous
+    values = sp$Tatur,
+    title = "Taxa d'atur",
+    opacity = 1
+  )
+
+```
+
+
 
