@@ -15,7 +15,9 @@ Depends:
 Imports: 
     dplyr,
     janitor,
+    leaflet,
     magrittr,
+    sf,
     tidyselect
 URL: https://github.com/icg-cat/interpola
 BugReports: https://github.com/icg-cat/interpola/issues

@@ -48,7 +48,9 @@ El paquet `interpola` simplifica un seguit de tasques per la interpolació espac
 
 * estandarditza_1(): funció per estandarditzar les dades inicials a un format que es pugui integrar posteriorment amb les dades catastrals, que són les que permeten dividir i reagrupar en altres divisions territorials
 * identifica_seccionat_2(): funció que identifica l'any de seccionat de les dades inicials (que no té per què coincidir amb l'any dels indicadors informats)
-* redistri_sc_3(): funció que redistribueix els indicadors d'un seccionat a un altre, ponderant per individus o per nombre d'habitatges.  
+* redistri_sc_3(): funció que redistribueix els indicadors d'un seccionat a un altre, ponderant per individus o per nombre d'habitatges. 
+
+`r emo::ji("see")`: *En la versió pública del paquet (GitHub) no s'inclou la taula amb la correspondència entre parcel·les i seccions, estimacions de la població i recompte del nombre d'habitatges entre 2011 i 2023, que sí s'inclou al repositori local del paquet. Les dades d'aquesta taula s'estructuren igual que a la sub-mostra de les dades d'exemple, anomenades cad_AMB.* 
 
 L'estat de desenvolupament actual del paquet es resumeix en aquest diagrama de procés: 
 
@@ -111,7 +113,9 @@ L'objecte `res` conté els resultats d'interpolar les dades de la taxa d'atur de
 
 # Mapejar els resultats
 
-Revisem els resultats obtinguts. Primer hem de preparar les dades. Agafem la mostra de shapefile de les dades d'exemple, i li agreguem les dades interpolades
+Revisem els resultats obtinguts. Primer hem de preparar les dades. Agafem la mostra de shapefile de les dades d'exemple, i li agreguem les dades interpolades. 
+
+El paquet conté una funció que ens facilitarà visualitzar els resultats: `fes_mapa()`
 ```{r}
 sp <- ex_data$shapes %>% 
   mutate(
@@ -119,12 +123,13 @@ sp <- ex_data$shapes %>%
   )
 ```
 
+
 ```{r}
 fes_mapa(shape_data = sp, nom_indicador = "Tatur", ciutat = "Badalona", focus = 14)
 ```
 
 
-```{r}
+```{r eval=FALSE, include=FALSE}
 bcn_lat <- 41.4476  # Latitud  Barcelona
 bcn_lng <- 2.2462   # Longitud  Barcelona
 
