@@ -1,6 +1,10 @@
-# "Package interpola - vignette"
+# Package interpola - vignette
 **Irene Cruz**
 **20-11-24**
+
+Aquest paquet s'ha desenvolupat dins de les línies de treball i gràcies al finançament de l'[Institut Metròpoli](institutmetropoli.cat). Per referenciar-lo:
+
+`r paste0("Cruz-Gómez, Irene (2024). *interpola. Eines per la interpolació de dades espacials*. ", "Versió ", packageVersion("interpola")[[1]], ". https://github.com/icg-cat/interpola")`
 
 # Presentació
 
