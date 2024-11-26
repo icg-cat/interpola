@@ -1,4 +1,4 @@
-# "Package interpola - vignette"
+# Package interpola - vignette
 **Irene Cruz**
 **20-11-24**
 
