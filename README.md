@@ -4,7 +4,7 @@
 
 Aquest paquet s'ha desenvolupat dins de les línies de treball i gràcies al finançament de l'[Institut Metròpoli](institutmetropoli.cat). Per referenciar-lo:
 
-`r paste0("Cruz-Gómez, Irene (2024). *interpola. Eines per la interpolació de dades espacials*. ", "Versió ", packageVersion("interpola")[[1]], ". https://github.com/icg-cat/interpola")`
+Cruz-Gómez, Irene (2024). *interpola. Eines per la interpolació de dades espacials*. Versió 1.0.0. https://github.com/icg-cat/interpola"
 
 # Presentació
 
@@ -14,7 +14,7 @@ El paquet `interpola` simplifica un seguit de tasques per la interpolació espac
 * identifica_seccionat_2(): funció que identifica l'any de seccionat de les dades inicials (que no té per què coincidir amb l'any dels indicadors informats)
 * redistri_sc_3(): funció que redistribueix els indicadors d'un seccionat a un altre, ponderant per individus o per nombre d'habitatges. 
 
-🙈: *En la versió pública del paquet (GitHub) no s'inclou la taula amb la correspondència entre parcel·les i seccions, estimacions de la població i recompte del nombre d'habitatges entre 2011 i 2023, que sí s'inclou al repositori local del paquet. Les dades d'aquesta taula s'estructuren igual que a la sub-mostra de les dades d'exemple, anomenades cad_AMB.* 
+🚨: *En la versió pública del paquet (GitHub) no s'inclou la taula amb la correspondència entre parcel·les i seccions, estimacions de la població i recompte del nombre d'habitatges entre 2011 i 2023, que sí s'inclou al repositori local del paquet. Les dades d'aquesta taula s'estructuren igual que a la sub-mostra de les dades d'exemple, anomenades cad_AMB.* 
 
 L'estat de desenvolupament actual del paquet es resumeix en aquest diagrama de procés: 
 ![flow](https://github.com/user-attachments/assets/b8b98059-60be-4e93-9ad8-ace6e612cc9c)
