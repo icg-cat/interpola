@@ -1,11 +1,10 @@
 Package: interpola
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Aplica Interpolacions Espacials de Dades entre Seccions Censals
 Version: 1.0.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: Irene Cruz Gómez
+Maintainer: <irene.cruz@institutmetropoli.cat>
+Description: El paquet `interpola` simplifica un seguit de tasques per la interpolació espacial de dades d'indicadors informats al nivell de la secció censal.La interpolació passa les dades de secció censal a parcel·la catastral i les agrupa en noves seccions censals. Aquest procediment és útil en els casos (freqüents) on l'edició de les dades per secció censal no es corresponen amb l'any del ceccionat. El procediment permet poderar per població o habitatges per parcel·la.  
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -21,3 +20,4 @@ Imports:
     tidyselect
 URL: https://github.com/icg-cat/interpola
 BugReports: https://github.com/icg-cat/interpola/issues
+Vignette: https://github.com/icg-cat/interpola
